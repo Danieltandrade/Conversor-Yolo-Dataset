@@ -92,7 +92,7 @@ def process_data(images_dir, labels_dir, train_count, val_count, classes,
         train: {os.path.join(yolo_dataset_dir, 'dataset/images/train')}
         val: {os.path.join(yolo_dataset_dir, 'dataset/images/val')}
         nc: {len(classes)}
-        names: {[f"{i}: {class_name}" for i, class_name in enumerate(classes)]}
+        names: {list(range(len(classes)))}
         """
     with open(os.path.join(yolo_dataset_dir, "data.yaml"), "w") as f:
         f.write(yaml_content)
