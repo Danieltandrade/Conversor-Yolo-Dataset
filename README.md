@@ -1,4 +1,4 @@
-# OIDv7-Toolkit Reorganização para YOLO
+# Dataset Personalizado para YOLO
 
 [![Build Status](https://img.shields.io/badge/Build-Passing-green.svg)](https://github.com/your-username/oidv7-yolo-reorg/actions)
 [![Python Version](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/downloads/)
@@ -20,27 +20,40 @@ Este projeto cria um novo dataset personalizado a partir do Dataset OIDv7-Toolki
 
 ## Requisitos
 
-Python 3.7+
-OIDv7-Toolkit Dataset
-YOLO Framework
+__Python 3.8+__
+
+> [!NOTA]
+> Neste projeto não foi utilizado dependências externas, apenas as do Python.
+
 
 ## Instalação
 
-Clone o repositório: git clone https://github.com/your-username/oidv7-yolo-reorg.git
-Instale as dependências: pip install -r requirements.txt
+Clone o repositório:
+
+```bash
+git clone https://github.com/Danieltandrade/Conversor-Yolo-Dataset.git
+```
+
+## Uso
 
 Execute o script:
 
 ```bash
 python main.py
 ```
+> [!NOTA]
+> Após execução de "main.py", o script irá perguntar os caminhos para as pastas de imagens, labels e saída.
 
-## Uso
-Execute o script main.py e siga as instruções para fornecer os caminhos para as pastas de imagens, labels e saída.
 O script criará um novo dataset personalizado com pastas de treinamento e validação, dividindo os arquivos de imagens e labels para cada pasta e reorganizando. Também será criado o arquivo de configuração data.yaml.
 
 ## Contribuição
+
 Contribuições são bem-vindas! Se você encontrar um erro ou tiver uma sugestão, por favor abra uma issue ou envie um pull request.
 
 ## Licença
+
 Este projeto é licenciado sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+## Conclusão
+
+Este projeto apresentou o comprotamento esperados nos testes realizados. O dataset personalizado criado com base no OIDv7-Toolkit pode ser utilizado com o framework YOLO para treinamento de modelos de detecção de objetos.
