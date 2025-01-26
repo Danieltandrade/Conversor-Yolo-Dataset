@@ -22,7 +22,7 @@ Este projeto cria um novo dataset personalizado a partir do Dataset OIDv7-Toolki
 
 __Python 3.8+__
 
-> [!NOTA]
+> [!NOTE]
 > Neste projeto não foi utilizado dependências externas, apenas as do Python.
 
 
@@ -41,7 +41,7 @@ Execute o script:
 ```bash
 python main.py
 ```
-> [!NOTA]
+> [!NOTE]
 > Após execução de "main.py", o script irá perguntar os caminhos para as pastas de imagens, labels e saída.
 
 O script criará um novo dataset personalizado com pastas de treinamento e validação, dividindo os arquivos de imagens e labels para cada pasta e reorganizando. Também será criado o arquivo de configuração data.yaml.
