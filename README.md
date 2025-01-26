@@ -46,6 +46,19 @@ python main.py
 
 O script criará um novo dataset personalizado com pastas de treinamento e validação, dividindo os arquivos de imagens e labels para cada pasta e reorganizando. Também será criado o arquivo de configuração data.yaml.
 
+- Estrtura de Diretórios:
+```
+yolo_dataset
+    ├── dataset
+    │   ├── images
+    │   │   ├── train
+    │   │   └── val
+    │   └── labels
+    │       ├── train
+    │       └── val
+    └── data.yaml
+```
+
 ## Contribuição
 
 Contribuições são bem-vindas! Se você encontrar um erro ou tiver uma sugestão, por favor abra uma issue ou envie um pull request.

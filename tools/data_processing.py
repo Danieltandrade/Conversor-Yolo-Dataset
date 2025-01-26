@@ -10,7 +10,7 @@ import shutil
 import random
 
 def process_data(images_dir, labels_dir, train_count, val_count, classes, 
-                 output_dir, train_images_dir, val_images_dir, train_labels_dir, val_labels_dir
+                 yolo_dataset_dir, train_images_dir, val_images_dir, train_labels_dir, val_labels_dir
                  ):
     """
     Função para processamento de dados.
@@ -89,12 +89,12 @@ def process_data(images_dir, labels_dir, train_count, val_count, classes,
 
     # Criar arquivo data.yaml
     yaml_content = f"""
-        train: {os.path.join(output_dir, 'dataset/images/train')}
-        val: {os.path.join(output_dir, 'dataset/images/val')}
+        train: {os.path.join(yolo_dataset_dir, 'dataset/images/train')}
+        val: {os.path.join(yolo_dataset_dir, 'dataset/images/val')}
         nc: {len(classes)}
-        names: [{', '.join(f"'{c}'" for c in classes)}]
+        names: {dict(zip(classes, range(len(classes))))}
         """
-    with open(os.path.join(output_dir, "data.yaml"), "w") as f:
+    with open(os.path.join(yolo_dataset_dir, "data.yaml"), "w") as f:
         f.write(yaml_content)
 
     print("Processamento concluido com sucesso!")

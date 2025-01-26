@@ -33,11 +33,11 @@ if __name__ == "__main__":
     print("Por favor, siga os passos abaixo para obter o dataset reorganizado!")
 
     images_dir, labels_dir, train_count, val_count, classes = io.get_user_input()
-    output_dir, train_images_dir, val_images_dir, train_labels_dir, val_labels_dir = io.create_output_dir()
+    yolo_dataset_dir, train_images_dir, val_images_dir, train_labels_dir, val_labels_dir = io.create_output_dir()
 
-    path_oiv7 = utils.validate_input_params(images_dir, labels_dir, output_dir)
+    path_oiv7 = utils.validate_input_params(images_dir, labels_dir, yolo_dataset_dir)
 
     data_processing.process_data(images_dir, labels_dir, train_count, val_count, classes, 
-                                 output_dir, train_images_dir, val_images_dir, train_labels_dir, 
+                                 yolo_dataset_dir, train_images_dir, val_images_dir, train_labels_dir, 
                                  val_labels_dir
                                  )

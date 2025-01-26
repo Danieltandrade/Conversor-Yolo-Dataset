@@ -7,7 +7,7 @@ Modulos:
 
 import os
 
-def validate_input_params(images_dir, labels_dir, output_dir):
+def validate_input_params(images_dir, labels_dir, yolo_dataset_dir):
     """
     Função para verificação da existência de pastas e arquivos.
 
@@ -24,7 +24,7 @@ def validate_input_params(images_dir, labels_dir, output_dir):
         raise ValueError(f'A pasta de imagens "{images_dir}" não encontrada!')
     if not os.path.exists(labels_dir):
         raise ValueError(f'A pasta de labels "{labels_dir}" não encontrada!')
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(yolo_dataset_dir):
+        os.makedirs(yolo_dataset_dir)
 
     return True
