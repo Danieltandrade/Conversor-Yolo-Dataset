@@ -1,7 +1,7 @@
 # Dataset Personalizado para YOLO
 
 [![Build Status](https://img.shields.io/badge/Build-Passing-green.svg)](https://github.com/your-username/oidv7-yolo-reorg/actions)
-[![Python Version](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Este projeto cria um dataset personalizado a partir do Dataset OIDv7-Toolkit para uso com o framework YOLO.
