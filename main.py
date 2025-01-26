@@ -23,7 +23,7 @@ Para executar o script, execute o seguinte comando:
     python main.py
 """
 
-from tools import data_processing
+from tools import teste_data_processing
 from tools import io
 from tools import utils
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     path_oiv7 = utils.validate_input_params(images_dir, labels_dir, yolo_dataset_dir)
 
-    data_processing.process_data(images_dir, labels_dir, train_count, val_count, classes, 
+    teste_data_processing.process_data(images_dir, labels_dir, train_count, val_count, classes, 
                                  yolo_dataset_dir, train_images_dir, val_images_dir, train_labels_dir, 
                                  val_labels_dir
                                  )
