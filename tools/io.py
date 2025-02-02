@@ -1,79 +1,56 @@
 """
-Arquivo io.py contendo funções para criação de pastas de saída e obtenção de inputs do usuário.
-
-Modulos:
-- get_user_input
-- create_output_dir
-
-Parâmetros de entrada:
-    - images_dir: Caminho para a pasta de imagens
-    - labels_dir: Caminho para a pasta de labels
-    - output_dir: Caminho para a pasta de saída
-    - train_count: Quantidade de imagens para treinamento
-    - val_count: Quantidade de imagens para validação
-    - classes: Lista de nomes das classes
 """
 
 import os
+import pandas as pd
 
-def get_user_input():
-    """
-    Função para obtenção de inputs do usuário.
+# Mapeamento das classes Open Images → YOLO
+def class_mapping(dataset_dir):
+    path_class = os.path.join(dataset_dir, "class_names.csv")
+    num_class = int(input("Digite o numero de classes: "))
 
-    Args:
-        None
-
-    Returns:
-        images_dir (str): Caminho para a pasta de imagens.
-        labels_dir (str): Caminho para a pasta de rótulos.
-        train_count (int): Quantidade de imagens para treino.
-        val_count (int): Quantidade de imagens para validação.
-        classes (list): Lista de nomes das classes.
-    """
-
-    images_dir = input("Digite o caminho para a pasta de imagens: ")
-    labels_dir = input("Digite o caminho para a pasta de labels: ")
-    train_count = int(input("Digite a quantidade de imagens para treinamento: "))
-    val_count = int(input("Digite a quantidade de imagens para validação: "))
-    num_classes = int(input("Digite a quantidade de classes: "))
     classes = []
+    class_map = {}
 
-    for i in range(num_classes):
-        class_name = input(f"Digite o nome da classe {i+1}: ")
+    for i in range(num_class):
+        class_name = input(f"Digite o nome da classe {i}: ")
         classes.append(class_name)
 
-    return images_dir, labels_dir, train_count, val_count, classes
+    df = pd.read_csv(path_class)
+    for class_name in classes:
+        row = df[df.iloc[:, 1] == class_name].iloc[0]
+        class_code = row.iloc[0]
+        class_map[class_code] = class_name
 
-def create_output_dir():
+    return class_map
+
+def output_paths(class_map, dataset_dir):
     """
-    Função para criação de pastas de saída.
-
-    Args:
-        None
-
-    Returns:
-        output_dir (str): Caminho para a pasta de saída.
-        train_images_dir (str): Caminho para a pasta de imagens de treino.
-        val_images_dir (str): Caminho para a pasta de imagens de validação.
-        train_labels_dir (str): Caminho para a pasta de rótulos de treino.
-        val_labels_dir (str): Caminho para a pasta de rótulos de validação.
+    Função para criar a estrutura de pastas do dataset YOLO
     """
+    output_dir = input("Digite o caminho da pasta de saída: ")
+    # Diretórios do dataset
+    images_dir = os.path.join(dataset_dir, "dataset", "images")
+    yolo_dir = os.path.join(output_dir, "yolo_dataset")
 
-    output_dir = input("Digite o caminho para a pasta de saída: ")
-    yolo_dataset_dir = os.path.join(output_dir, "yolo_dataset")
+    # Arquivos CSV
+    annotations = {
+        "train": os.path.join(dataset_dir,"oidv6-train.csv"),
+        "val": os.path.join(dataset_dir,"oidv7-validation.csv"),
+        "test": os.path.join(dataset_dir,"oidv7-test.csv"),
+    }
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    # Criar estrutura de diretórios YOLO
+    for split in ["train", "val", "test"]:
+        os.makedirs(os.path.join(yolo_dir, "images", split), exist_ok=True)
+        os.makedirs(os.path.join(yolo_dir, "labels", split), exist_ok=True)
+    
+    # Cria o arquivo de configuração data.yaml
+    with open(os.path.join(yolo_dir, "data.yaml"), "w") as f:
+        f.write(f"train: {os.path.join(yolo_dir, 'images', 'train')}\n")
+        f.write(f"val: {os.path.join(yolo_dir, 'images', 'val')}\n")
+        f.write(f"test: {os.path.join(yolo_dir, 'images', 'test')}\n")
+        f.write(f"nc: {len(class_map)}\n")
+        f.write(f"names: {[class_map[code] for code in sorted(class_map.keys())]}\n")
 
-    else:
-        # Criar pastas de saída
-        train_images_dir = os.path.join(yolo_dataset_dir, "dataset/images/train")
-        val_images_dir = os.path.join(yolo_dataset_dir, "dataset/images/val")
-        train_labels_dir = os.path.join(yolo_dataset_dir, "dataset/labels/train")
-        val_labels_dir = os.path.join(yolo_dataset_dir, "dataset/labels/val")
-        os.makedirs(train_images_dir, exist_ok=True)
-        os.makedirs(val_images_dir, exist_ok=True)
-        os.makedirs(train_labels_dir, exist_ok=True)
-        os.makedirs(val_labels_dir, exist_ok=True)
-
-    return yolo_dataset_dir, train_images_dir, val_images_dir, train_labels_dir, val_labels_dir
+    return dataset_dir, images_dir, yolo_dir, annotations

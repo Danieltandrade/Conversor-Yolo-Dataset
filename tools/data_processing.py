@@ -1,100 +1,89 @@
 """
-Arquivo data_processing.py contendo funções para processamento de dados.
-
-Modulos:
-- process_data
 """
 
+from tqdm import tqdm
+
 import os
-import shutil
+import pandas as pd
 import random
+import shutil
 
-def process_data(images_dir, labels_dir, train_count, val_count, classes, 
-                 yolo_dataset_dir, train_images_dir, val_images_dir, train_labels_dir, val_labels_dir
-                 ):
-    """
-    Função para processamento de dados.
+# Mapeamento das classes Open Images → YOLO
+def class_mapping2(dataset_dir):
+    path_class = os.path.join(dataset_dir, "class_names.csv")
+    num_class = int(input("Digite o numero de classes: "))
 
-    Args:
-        images_dir (str): Caminho para a pasta de imagens.
-        labels_dir (str): Caminho para a pasta de rótulos.
-        train_count (int): Quantidade de imagens para treino.
-        val_count (int): Quantidade de imagens para validação.
-        classes (list): Lista de nomes das classes.
-        output_dir (str): Caminho para a pasta de saída.
-        train_images_dir (str): Caminho para a pasta de imagens de treino.
-        val_images_dir (str): Caminho para a pasta de imagens de validação.
-        train_labels_dir (str): Caminho para a pasta de rótulos de treino.
-        val_labels_dir (str): Caminho para a pasta de rótulos de validação.
+    classes = []
+    class_map = {}
 
-    Returns:
-        None
-    """
+    for i in range(num_class):
+        class_name = input(f"Digite o nome da classe {i}: ")
+        classes.append(class_name)
 
-    # Dicionário de mapeamento de classes
-    class_map = {class_name: i for i, class_name in enumerate(classes)}
-
-    # Função para processar uma classe específica
-    def process_class_and_fix_labels(class_name):
-        """
-        Função para processar uma classe especifica.
-
-        Args:
-            class_name (str): Nome da classe.
-
-        Returns:
-            None
-        """
-        # Listar arquivos da classe nos rótulos
-        all_labels = [f for f in os.listdir(labels_dir) if f.endswith(".txt")]
-
-        # Filtrar arquivos que pertencem à classe
-        class_files = []
-        for label_file in all_labels:
-            label_path = os.path.join(labels_dir, label_file)
-            with open(label_path, "r") as f:
-                content = f.read()
-                if content.startswith(class_name):  # Verificar se a classe está no início
-                    class_files.append(label_file)
-
-        # Embaralhar os arquivos
-        random.shuffle(class_files)
-
-        # Dividir entre treino e validação
-        train_files = class_files[:train_count]
-        val_files = class_files[train_count:train_count + val_count]
-
-        # Função para copiar e corrigir rótulos
-        def copy_and_fix(file, dest_images_dir, dest_labels_dir):
-            # Copiar imagem correspondente
-            image_file = file.replace(".txt", ".jpg")
-            shutil.copy(os.path.join(images_dir, image_file), dest_images_dir)
-            # Corrigir e copiar rótulo correspondente
-            label_path = os.path.join(labels_dir, file)
-            with open(label_path, "r") as f:
-                lines = f.readlines()
-            with open(os.path.join(dest_labels_dir, file), "w") as f:
-                for line in lines:
-                    f.write(line.replace(class_name, str(class_map[class_name])))
-
-        # Copiar e corrigir rótulos para treino e validação
-        for file in train_files:
-            copy_and_fix(file, train_images_dir, train_labels_dir)
-        for file in val_files:
-            copy_and_fix(file, val_images_dir, val_labels_dir)
-
-    # Processar cada classe
+    df = pd.read_csv(path_class)
     for class_name in classes:
-        process_class_and_fix_labels(class_name)
+        row = df[df.iloc[:, 1] == class_name].iloc[0]
+        class_code = row.iloc[0]
+        class_map[class_code] = class_name
 
-    # Criar arquivo data.yaml
-    yaml_content = f"""
-        train: {os.path.join(yolo_dataset_dir, 'dataset/images/train')}
-        val: {os.path.join(yolo_dataset_dir, 'dataset/images/val')}
-        nc: {len(classes)}
-        names: {list(range(len(classes)))}
-        """
-    with open(os.path.join(yolo_dataset_dir, "data.yaml"), "w") as f:
-        f.write(yaml_content)
+    return class_map
 
-    print("Processamento concluido com sucesso!")
+def data_processing(class_map, yolo_dir):
+
+    # Criar estrutura de diretórios YOLO
+    for split in ["train", "val", "test"]:
+        os.makedirs(os.path.join(yolo_dir, "images", split), exist_ok=True)
+        os.makedirs(os.path.join(yolo_dir, "labels", split), exist_ok=True)
+
+    # Cria o arquivo de configuração data.yaml
+    with open(os.path.join(yolo_dir, "data.yaml"), "w") as f:
+        f.write(f"train: {os.path.join(yolo_dir, 'images', 'train')}\n")
+        f.write(f"val: {os.path.join(yolo_dir, 'images', 'val')}\n")
+        f.write(f"test: {os.path.join(yolo_dir, 'images', 'test')}\n")
+        f.write(f"nc: {len(class_map)}\n")
+        f.write(f"names: {[class_map[code] for code in sorted(class_map.keys())]}\n")
+
+    print("Diretórios YOLO criados com sucesso!")
+
+def images_and_labels_processing(annotations, class_map, dataset_dir, images_dir, yolo_dir):
+    # Obter a lista de imagens na pasta
+    unique_images = [f for f in os.listdir(images_dir) if f.endswith('.jpg')]
+
+    selected_images = {}
+    for class_name in class_map.values():
+        total_images = int(input("Digite a quantidade total de imagens para a(s) classe(s): "))
+
+        train_images = int(total_images * 0.85)
+        val_images = int(total_images * 0.10)
+        test_images = int(total_images * 0.05)
+
+        selected_images[class_name] = {
+            'train': random.sample(list(unique_images), train_images),
+            'val': random.sample(list(unique_images), val_images),
+            'test': random.sample(list(unique_images), test_images)
+        }
+
+    # Processar cada conjunto de dados (train, val, test)
+    for split_name, _ in annotations.items():
+        for class_name, images in selected_images.items():
+            for image in tqdm(images[split_name], desc=f"Gravando imagens para {split_name}"):
+                
+                image_path = os.path.join(images_dir, image)
+                destination_path = os.path.join(yolo_dir, "images", split_name, image)
+                shutil.copy(image_path, destination_path)
+
+            for image in tqdm(images[split_name], desc=f"Convertendo e gravando labels para {split_name}"):
+                image_name, _ = os.path.splitext(image)
+                label_path = os.path.join(yolo_dir, "labels", split_name, image_name + ".txt")
+                if not os.path.exists(label_path):
+                    with open(label_path, "w") as f:
+                        f.write("conteudo do arquivo de label\n")
+                with open(label_path, "r") as f:
+                    lines = f.readlines()
+
+                output_label_path = os.path.join(yolo_dir, "labels", split_name, image_name + ".txt")
+                with open(output_label_path, "w") as f:
+                    for line in lines:
+                        class_id, x, y, w, h = line.strip().split()
+                        class_id = list(class_map.keys())[list(class_map.values()).index(class_name)]
+                        f.write(f"{class_id} {x} {y} {w} {h}\n")

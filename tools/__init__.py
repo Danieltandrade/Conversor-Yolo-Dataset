@@ -3,13 +3,11 @@ Arquivo __init__.py contendo o módulo tools.
 
 Modulos:
 - data_processing
-- io
-- utils
+- input_output_paths
 """
 
+from . import ddata_processing
 from . import data_processing
 from . import io
-from . import teste_data_processing
-from . import utils
 
-__all__ = ["io", "data_processing", "teste_data_processing", "utils"]
+__all__ = ["ddata_processing", "data_processing", "io"]
