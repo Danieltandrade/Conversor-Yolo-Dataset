@@ -6,6 +6,15 @@ import pandas as pd
 
 # Mapeamento das classes Open Images → YOLO
 def class_mapping(dataset_dir):
+    """
+    Função para mapear as classes do Open Images Dataset para YOLO
+    
+    Args:
+        dataset_dir (str): Caminho do dataset
+
+    Returns:
+        dict: Mapeamento das classes
+    """
     path_class = os.path.join(dataset_dir, "class_names.csv")
     num_class = int(input("Digite o numero de classes: "))
 
@@ -22,12 +31,13 @@ def class_mapping(dataset_dir):
         class_code = row.iloc[0]
         class_map[class_code] = class_name
 
-    return class_map
+    return {v: k for k, v in class_map.items()}
 
 def output_paths(class_map, dataset_dir):
     """
     Função para criar a estrutura de pastas do dataset YOLO
     """
+
     output_dir = input("Digite o caminho da pasta de saída: ")
     # Diretórios do dataset
     images_dir = os.path.join(dataset_dir, "dataset", "images")
@@ -51,6 +61,6 @@ def output_paths(class_map, dataset_dir):
         f.write(f"val: {os.path.join(yolo_dir, 'images', 'val')}\n")
         f.write(f"test: {os.path.join(yolo_dir, 'images', 'test')}\n")
         f.write(f"nc: {len(class_map)}\n")
-        f.write(f"names: {[class_map[code] for code in sorted(class_map.keys())]}\n")
+        f.write(f"names: {[code for code in sorted(class_map.keys())]}\n")
 
-    return dataset_dir, images_dir, yolo_dir, annotations
+    return images_dir, yolo_dir, annotations
