@@ -1,4 +1,10 @@
 """
+Módulo de entrada e saída de dados
+
+Modulos:
+
+- class_mapping: Função para mapear as classes do Open Images Dataset para YOLO
+- output_paths: Função para criar a estrutura de pastas do dataset YOLO
 """
 
 import os
@@ -36,6 +42,14 @@ def class_mapping(dataset_dir):
 def output_paths(class_map, dataset_dir):
     """
     Função para criar a estrutura de pastas do dataset YOLO
+
+    Args:
+        class_map (dict): Mapeamento das classes
+        dataset_dir (str): Caminho do dataset
+
+    Returns:
+        dict: Arquivos CSV
+        str: Diretórios de pastas de imagens e pastas de labels
     """
 
     output_dir = input("Digite o caminho da pasta de saída: ")
@@ -63,4 +77,4 @@ def output_paths(class_map, dataset_dir):
         f.write(f"nc: {len(class_map)}\n")
         f.write(f"names: {[code for code in sorted(class_map.keys())]}\n")
 
-    return images_dir, yolo_dir, annotations
+    return annotations, images_dir, yolo_dir

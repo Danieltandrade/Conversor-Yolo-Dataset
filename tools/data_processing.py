@@ -5,27 +5,30 @@ import os
 import pandas as pd
 import shutil
 
-def create_yolo_dir(class_map, yolo_dir):
-
-    # Criar estrutura de diretórios YOLO
-    for split in ["train", "val", "test"]:
-        os.makedirs(os.path.join(yolo_dir, "images", split), exist_ok=True)
-        os.makedirs(os.path.join(yolo_dir, "labels", split), exist_ok=True)
-
-    # Cria o arquivo de configuração data.yaml
-    with open(os.path.join(yolo_dir, "data.yaml"), "w") as f:
-        f.write(f"train: {os.path.join(yolo_dir, 'images', 'train')}\n")
-        f.write(f"val: {os.path.join(yolo_dir, 'images', 'val')}\n")
-        f.write(f"test: {os.path.join(yolo_dir, 'images', 'test')}\n")
-        f.write(f"nc: {len(class_map)}\n")
-        f.write(f"names: {[class_map[code] for code in sorted(class_map.keys())]}\n")
-
-    print("Diretórios YOLO criados com sucesso!")
-
 def images_and_labels_processing(annotations, class_map, images_dir, yolo_dir):
+    """
+    Função para processar imagens e labels
+
+    Args:
+        annotations (dict): Arquivos CSV
+        class_map (dict): Mapeamento das classes
+        images_dir (str): Caminho das imagens
+        yolo_dir (str): Caminho da pasta de saída do YOLO
+    """
 
     def convert_to_yolo_format(classe, image_name, labels_used_df):
-        row = labels_used_df[labels_used_df["ImageID"] == image_name[0]].iloc[0]
+        """
+        Função para converter os labels para o formato YOLO
+
+        Args:
+            classe (str): Nome da classe
+            image_name (str): Nome da imagem
+            labels_used_df (pandas.DataFrame): DataFrame com os labels usadas
+
+        Returns:
+            str: Labels no formato YOLO
+        """
+        row = labels_used_df[labels_used_df["ImageID"] == image_name[0]]
         class_id = classe
         x_center = (row["XMin"] + row["XMax"]) / 2
         y_center = (row["YMin"] + row["YMax"]) / 2
@@ -48,15 +51,24 @@ def images_and_labels_processing(annotations, class_map, images_dir, yolo_dir):
         for i in annotations.keys():
             df = pd.read_csv(annotations[i])
             labels_used_df = df[df["LabelName"] == class_map[classe]]
+            #images_path = os.path.join(yolo_dir, "images", i)
+            #images_names = [os.path.splitext(arq)[0] for arq in os.listdir(images_path)]
 
             for image in tqdm(labels_used_df["ImageID"].sample(images_by_folder[i]), desc=f"Gravando imagens para {i}"):
                 image_path = os.path.join(images_dir, image + ".jpg")
                 destination_path = os.path.join(yolo_dir, "images", i, image + ".jpg")
                 shutil.copy(image_path, destination_path)
 
-                # Cria o arquivo de label
-                image_name= os.path.splitext(image)
-                label_path = os.path.join(yolo_dir, "labels", i, image_name[0] + ".txt")
-                with open(label_path, "w") as f:
-                    labels = convert_to_yolo_format(classe, image_name, labels_used_df)
-                    f.write(labels + "\n")
+            images_path = os.path.join(yolo_dir, "images", i)
+            images_names = [os.path.splitext(arq)[0] for arq in os.listdir(images_path)]
+            for image_name in tqdm(images_names, desc=f"Gravando labels para {i}"):
+                for index, rows in labels_used_df[labels_used_df["ImageID"] == image_name].iterrows():
+                    class_id = classe
+                    x_center = (rows["XMin"] + rows["XMax"]) / 2
+                    y_center = (rows["YMin"] + rows["YMax"]) / 2
+                    width = rows["XMax"] - rows["XMin"]
+                    height = rows["YMax"] - rows["YMin"]
+
+                    yoloLabel = f"{class_id} {x_center} {y_center} {width} {height}\n"
+                    with open(os.path.join(yolo_dir, "labels", i, image_name + ".txt"), "a") as f:
+                        f.write(yoloLabel)
