@@ -19,7 +19,7 @@ def class_mapping(dataset_dir):
         dataset_dir (str): Caminho do dataset
 
     Returns:
-        dict: Mapeamento das classes
+        class_map (dict): Mapeamento das classes
     """
     path_class = os.path.join(dataset_dir, "class_names.csv")
     num_class = int(input("Digite o numero de classes: "))
@@ -48,8 +48,9 @@ def output_paths(class_map, dataset_dir):
         dataset_dir (str): Caminho do dataset
 
     Returns:
-        dict: Arquivos CSV
-        str: Diretórios de pastas de imagens e pastas de labels
+        annotations (dict): Arquivos CSV
+        images_dir (str): Diretório das imagens
+        yolo_dir (str): Diretório do dataset YOLO
     """
 
     output_dir = input("Digite o caminho da pasta de saída: ")

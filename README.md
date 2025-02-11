@@ -28,9 +28,6 @@ Instale as dependências do projeto:
 pip install -r requirements.txt
 ```
 
-
-
-
 ## Instalação
 
 Clone o repositório:
@@ -53,9 +50,9 @@ O script criará um novo dataset personalizado com pastas de treinamento e valid
 Para as imagens de treinamento e validação, o script irá perguntar a quantidade de imagens de cada classe, sendo dividdo da seguinte forma:
 - 85% para treinamento
 - 10% para validação
-- 5% para teste
+- 05% para teste
 
-> [!ATTENTION]
+> [!WARNING]
 > Caso deseje formar um dataset com uma quantidade de imagens muito grande, primeiramente confira a quantidade de imagens de cada classe no Dataset OIDv7-Toolkit.
 
 - Estrtura de Diretórios:
