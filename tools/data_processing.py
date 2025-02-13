@@ -1,3 +1,11 @@
+"""
+Módulo de processamento de dados
+
+Modulos:
+
+- images_and_labels_processing: Função para processar os arquivos de imagens e labels e copiar 
+para as pastas de treinamento e validação.
+"""
 
 from tqdm import tqdm
 
@@ -32,20 +40,20 @@ def images_and_labels_processing(annotations, class_map, images_dir, yolo_dir):
         print(f"Processando imagens e labels de {classe}...")
 
         # Percorre os arquivos CSV para cada pasta
-        for i in annotations.keys():
-            df = pd.read_csv(annotations[i])
+        for file_path in annotations.keys():
+            df = pd.read_csv(annotations[file_path])
             labels_used_df = df[df["LabelName"] == class_map[classe]]
 
             # Copia as imagens para as pastas de treinamento, validação e teste
-            for image in tqdm(labels_used_df["ImageID"].sample(images_by_folder[i]), desc=f"Gravando imagens para {i}"):
+            for image in tqdm(labels_used_df["ImageID"].sample(images_by_folder[file_path]), desc=f"Gravando imagens para {file_path}"):
                 image_path = os.path.join(images_dir, image + ".jpg")
-                destination_path = os.path.join(yolo_dir, "images", i, image + ".jpg")
+                destination_path = os.path.join(yolo_dir, "images", file_path, image + ".jpg")
                 shutil.copy(image_path, destination_path)
 
             # Copia os labels para as pastas de treinamento, validação e teste
-            images_path = os.path.join(yolo_dir, "images", i)
+            images_path = os.path.join(yolo_dir, "images", file_path)
             images_names = [os.path.splitext(arq)[0] for arq in os.listdir(images_path)]
-            for image_name in tqdm(images_names, desc=f"Gravando labels para {i}"):
+            for image_name in tqdm(images_names, desc=f"Gravando labels para {file_path}"):
                 for index, rows in labels_used_df[labels_used_df["ImageID"] == image_name].iterrows():
                     class_id = classe
                     x_center = (rows["XMin"] + rows["XMax"]) / 2
@@ -54,5 +62,5 @@ def images_and_labels_processing(annotations, class_map, images_dir, yolo_dir):
                     height = rows["YMax"] - rows["YMin"]
 
                     yoloLabel = f"{class_id} {x_center} {y_center} {width} {height}\n"
-                    with open(os.path.join(yolo_dir, "labels", i, image_name + ".txt"), "a") as f:
+                    with open(os.path.join(yolo_dir, "labels", file_path, image_name + ".txt"), "a") as f:
                         f.write(yoloLabel)
