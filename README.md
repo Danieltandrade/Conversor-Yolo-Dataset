@@ -1,7 +1,10 @@
 # Dataset Personalizado para YOLO
 
 [![Build Status](https://img.shields.io/badge/Build-Passing-green.svg)](https://github.com/Danieltandrade/Conversor-Yolo-Dataset/actions)
-[![Python Version](https://img.shields.io/badge/Python-3.9|3.10|3.11|3.12-blue.svg)](https://www.python.org/downloads/)
+[![OS Compatibility](https://img.shields.io/badge/OS-Windows%20|%20Linux%20|%20macOS-blue.svg)](https://github.com/Danieltandrade/Conversor-Yolo-Dataset)
+[![Python Version](https://img.shields.io/badge/Python-3.10|3.11|3.12-blue.svg)](https://www.python.org/downloads/)
+[![Code Size](https://img.shields.io/github/languages/code-size/Danieltandrade/Conversor-Yolo-Dataset.svg)](https://github.com/Danieltandrade/Conversor-Yolo-Dataset)
+[![Last Update](https://img.shields.io/github/last-commit/Danieltandrade/Conversor-Yolo-Dataset.svg)](https://github.com/Danieltandrade/Conversor-Yolo-Dataset)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Este projeto cria um dataset personalizado a partir do Dataset OIDv7-Toolkit para uso com o framework YOLO.
