@@ -77,11 +77,21 @@ def output_paths(add_test, class_map, dataset_dir):
         os.makedirs(os.path.join(yolo_dir, split, "labels"), exist_ok=True)
     
     # Cria o arquivo de configuração data.yaml
+    # with open(os.path.join(yolo_dir, "data.yaml"), "w") as f:
+    #     f.write(f"train: {os.path.join(yolo_dir, 'train', 'images')}\n")
+    #     f.write(f"val: {os.path.join(yolo_dir, 'val', 'images')}\n")
+    #     f.write(f"test: {os.path.join(yolo_dir, 'test', 'images')}\n") if add_test else None
+    #     f.write(f"nc: {len(class_map)}\n")
+    #     f.write(f"names: {[code for code in sorted(class_map.keys())]}\n")
+
     with open(os.path.join(yolo_dir, "data.yaml"), "w") as f:
         f.write(f"train: {os.path.join(yolo_dir, 'train', 'images')}\n")
         f.write(f"val: {os.path.join(yolo_dir, 'val', 'images')}\n")
-        f.write(f"test: {os.path.join(yolo_dir, 'test', 'images')}\n") if add_test else None
+        if add_test:
+            f.write(f"test: {os.path.join(yolo_dir, 'test', 'images')}\n")
         f.write(f"nc: {len(class_map)}\n")
-        f.write(f"names: {[code for code in sorted(class_map.keys())]}\n")
+        f.write("names:\n")
+        for idx, class_name in enumerate(sorted(class_map.keys())):
+            f.write(f"    {idx}: {class_name}\n")
 
     return annotations, images_dir, yolo_dir
