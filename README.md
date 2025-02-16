@@ -23,7 +23,7 @@ Este projeto cria um novo dataset personalizado a partir do Dataset OIDv7-Toolki
 
 ## Requisitos
 
-__Python 3.9+__
+__Python 3.10+__
 
 Instale as dependências do projeto:
 
