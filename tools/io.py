@@ -78,9 +78,9 @@ def output_paths(add_test, class_map, dataset_dir):
     
     # Cria o arquivo de configuração data.yaml
     with open(os.path.join(yolo_dir, "data.yaml"), "w") as f:
-        f.write(f"train: {os.path.join(yolo_dir, 'images', 'train')}\n")
-        f.write(f"val: {os.path.join(yolo_dir, 'images', 'val')}\n")
-        f.write(f"test: {os.path.join(yolo_dir, 'images', 'test')}\n") if add_test else None
+        f.write(f"train: {os.path.join(yolo_dir, 'train', 'images')}\n")
+        f.write(f"val: {os.path.join(yolo_dir, 'val', 'images')}\n")
+        f.write(f"test: {os.path.join(yolo_dir, 'test', 'images')}\n") if add_test else None
         f.write(f"nc: {len(class_map)}\n")
         f.write(f"names: {[code for code in sorted(class_map.keys())]}\n")
 

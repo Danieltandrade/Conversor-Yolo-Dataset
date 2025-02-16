@@ -54,7 +54,7 @@ def images_and_labels_processing(add_test, annotations, class_map, images_dir, y
         images_names = [os.path.splitext(arq)[0] for arq in os.listdir(images_path)]
         for image_name in tqdm(images_names, desc=f"Gravando labels para {file_path}"):
             for index, rows in labels_used_df[labels_used_df["ImageID"] == image_name].iterrows():
-                class_id = list(class_map.keys())[list(class_map.values()).index(rows["LabelName"])]
+                class_id = list(class_map.values()).index(rows["LabelName"])
                 x_center = (rows["XMin"] + rows["XMax"]) / 2
                 y_center = (rows["YMin"] + rows["YMax"]) / 2
                 width = rows["XMax"] - rows["XMin"]
