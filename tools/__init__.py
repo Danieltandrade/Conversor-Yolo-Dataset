@@ -7,7 +7,12 @@ Modulos:
 - data_processing: Módulo de processamento de dados.
 """
 
-from . import io
-from . import data_processing
+from .io import output_paths
+from .io import class_mapping
+from .data_processing import images_and_labels_processing
 
-__all__ = ["data_processing", "io"]
+__all__ = [
+    'output_paths',
+    'class_mapping',
+    'images_and_labels_processing'
+]
